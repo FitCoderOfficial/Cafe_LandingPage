@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models.signals import pre_save
 from django.utils.text import slugify
+from django.shortcuts import reverse
 
 User = get_user_model()
 
@@ -28,7 +29,7 @@ class Address(models.Model):
 
 class Product(models.Model):
     title = models.CharField(max_length=150)
-    sulg = models.SlugField(unique=True, allow_unicode=True)
+    slug = models.SlugField(unique=True, allow_unicode=True)
     image = models.ImageField(upload_to='product_images')
     description = models.TextField()
     created = models.DateField(auto_now_add=True)
@@ -37,6 +38,10 @@ class Product(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def get_absolute_url(self):
+        return reverse("cart:product-detail", kwargs={'slug': self.slug})
+    
     
 class OrderItem(models.Model):
     order = models.ForeignKey("Order", related_name='item', on_delete=models.CASCADE)
